@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Color Dice</title>
+
+<style>
+body{
+margin:0;
+background:#64d7ff;
+font-family:Arial,sans-serif;
+text-align:center;
+}
+
+h1{
+color:white;
+margin-top:20px;
+}
+
+#dice{
+display:flex;
+justify-content:center;
+gap:15px;
+margin:30px;
+}
+
+.dice{
+width:90px;
+height:90px;
+background:white;
+border-radius:20px;
+box-shadow:0 8px 15px rgba(0,0,0,.3);
+}
+
+#roll{
+background:#ff4444;
+color:white;
+border:none;
+padding:18px 70px;
+font-size:28px;
+border-radius:15px;
+font-weight:bold;
+cursor:pointer;
+}
+#history{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:8px;
+margin-top:20px;
+}
+
+.historyBox{
+width:30px;
+height:30px;
+border-radius:8px;
+}
+
+#filters{
+margin-top:30px;
+display:flex;
+justify-content:center;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.filter{
+width:45px;
+height:45px;
+border-radius:12px;
+border:none;
+cursor:pointer;
+}
+
+.off{
+opacity:.35;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🎲 Color Dice</h1>
+
+<div id="dice">
+<div class="dice" id="d1"></div>
+<div class="dice" id="d2"></div>
+<div class="dice" id="d3"></div>
+<div class="dice" id="d4"></div>
+</div>
+
+<button id="roll">ROLL</button>
+
+<h2>Istoric</h2>
+
+<div id="history"></div>
+
+<h2>Exclude culori</h2>
+
+<div id="filters"></div>
+
+<script>
+  const colors=["red","blue","yellow","green","purple","orange"];
+
+let blocked=[];
+let history=[];
+
+const filters=document.getElementById("filters");
+
+colors.forEach(color=>{
+const b=document.createElement("button");
+b.className="filter";
+b.style.background=color;
+
+b.onclick=()=>{
+if(blocked.includes(color)){
+blocked=blocked.filter(c=>c!==color);
+b.classList.remove("off");
+}else{
+blocked.push(color);
+b.classList.add("off");
+}
+};
+
+filters.appendChild(b);
+});
+
+function roll(){
+
+const available=colors.filter(c=>!blocked.includes(c));
+
+if(available.length===0){
+alert("Ai exclus toate culorile!");
+return;
+}
+
+let result=[];
+
+for(let i=1;i<=4;i++){
+
+const c=available[Math.floor(Math.random()*available.length)];
+
+document.getElementById("d"+i).style.background=c;
+
+result.push(c);
+
+}
+
+history.unshift(...result);
+
+if(history.length>40)
+history=history.slice(0,40);
+
+const h=document.getElementById("history");
+
+h.innerHTML="";
+
+history.forEach(c=>{
+
+const box=document.createElement("div");
+
+box.className="historyBox";
+
+box.style.background=c;
+
+h.appendChild(box);
+
+});
+
+}
+
+document.getElementById("roll").onclick=roll;
+
+roll();
+
+</script>
+
+</body>
+</html>
